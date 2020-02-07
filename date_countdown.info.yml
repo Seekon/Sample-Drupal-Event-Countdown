@@ -1,0 +1,6 @@
+name: Date Countdown Module
+description: Creates a block that uses date countdown service
+package: Custom
+type: module
+version: 1.0
+core: 8.x
