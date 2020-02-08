@@ -19,8 +19,14 @@ class DateCountdownBlock extends BlockBase implements BlockPluginInterface {
    */
   public function build() {
 
+    // Get current time
+    $now = time();
+
+    // @todo format_date deprecated
+    $date = format_date($now, 'short');
+
     return array(
-      '#markup' => $this->t('Hello world'),
+      '#markup' => $this->t('Date: @date', array('@date' => $date)),
     );
   }
 
