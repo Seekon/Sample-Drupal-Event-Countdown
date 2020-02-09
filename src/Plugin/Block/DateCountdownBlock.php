@@ -3,6 +3,7 @@ namespace Drupal\date_countdown\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\node\Entity\Node;
 
 /**
  * Provides a 'Date Countdown' Block
@@ -14,19 +15,35 @@ use Drupal\Core\Block\BlockPluginInterface;
  */
 class DateCountdownBlock extends BlockBase implements BlockPluginInterface {
 
-
   /**
    * {@inheritdoc}
    */
   public function build() {
 
-    // returns build method
+    // build method return
     $return_array = array();
 
-    // returns false if calculating was not possible
-    $datedifference = \Drupal::service('date_countdown.day_difference')->countDayDifference('February 9, 2020 09:00 PM');
+    // get node
+    $nodeParameter = \Drupal::routeMatch()->getParameter('node');
+    
+    // if node isn't an event, exit
+    if($nodeParameter->getType() != "event") {
 
-    // set #markup into $return_array;
+      // set #markup into $return_array
+      $return_array['#markup'] = $this->t('Error in calculating time difference');
+
+      // exit from the method
+      return $return_array;
+    }
+
+    // get field_event_date value 
+    $date = $nodeParameter->get("field_event_date")->getValue();
+    $date = $date[0]['value'];
+
+    // returns false if calculating was not possible
+    $datedifference = \Drupal::service('date_countdown.day_difference')->countDayDifference($date);
+
+    // set #markup into $return_array
     $this->setArrayDateDifference($datedifference, $return_array);
 
     return $return_array;
