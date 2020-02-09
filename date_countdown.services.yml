@@ -1,0 +1,3 @@
+services:
+    date_countdown.day_difference:
+        class: Drupal\date_countdown\Service\DateCountdownService

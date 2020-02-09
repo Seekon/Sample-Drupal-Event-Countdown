@@ -1,0 +1,7 @@
+date_countdown.content:
+  defaults:
+    _title: 'Date Countdown'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: 'TRUE'
