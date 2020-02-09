@@ -20,8 +20,13 @@ class DateCountdownBlock extends BlockBase implements BlockPluginInterface {
    */
   public function build() {
 
-    // build method return
+    // build method return array
     $return_array = array();
+
+    // no block cache
+    $return_array['#cache'] = [
+      'max-age' => 0,
+    ];
 
     // get node
     $nodeParameter = \Drupal::routeMatch()->getParameter('node');
