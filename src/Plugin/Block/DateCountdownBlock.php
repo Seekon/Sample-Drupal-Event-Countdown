@@ -2,8 +2,6 @@
 namespace Drupal\date_countdown\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Block\BlockPluginInterface;
-use Drupal\node\Entity\Node;
 
 /**
  * Provides a 'Date Countdown' Block
@@ -30,7 +28,7 @@ class DateCountdownBlock extends BlockBase {
 
     // get node
     $node_parameter = \Drupal::routeMatch()->getParameter('node');
-    
+
     // if node isn't an event, exit
     if($node_parameter->getType() != "event") {
 
@@ -41,7 +39,7 @@ class DateCountdownBlock extends BlockBase {
       return $return_array;
     }
 
-    // get field_event_date value 
+    // get field_event_date value
     $date = $node_parameter->get("field_event_date")->getValue();
     $date = $date[0]['value'];
 
