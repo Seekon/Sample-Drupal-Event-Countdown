@@ -1,43 +1,51 @@
 <?php
+
 namespace Drupal\date_countdown\Service;
 
 /**
- * Simple example of a Service
+ * DateCountdown service.
  */
 class DateCountdownService {
 
   /**
-   * DateCountdown Service method that receives DateTime parameter and returns an array of options based on the current time
+   * Calculates day difference.
    *
-   * @param DateTime $date
+   * @param string $date
+   *   Time to count from till now.
+   *
    * @return array
+   *   Asociative Array with information about day difference.
    */
   public function countDayDifference($date) {
-    // convert date to time
+    // Convert date to time.
     $anchor_time = strtotime($date);
-    // if conversion failed return from a function
-    if($anchor_time == FALSE) {
+    // If conversion failed return from a function.
+    if ($anchor_time == FALSE) {
       $is_valid = FALSE;
     }
     else {
       $is_valid = TRUE;
     }
-    // get current time
+    // Get current time.
     $current_time = time();
-    // get difference time in ms
+    // Get difference time in miliseconds.
     $remaining_time = $anchor_time - $current_time;
-    // get difference in days 
+    // Get difference in days.
     $days_remaining = floor($remaining_time / 86400);
 
-    // check if today
-    if(date('dd', $anchor_time) == date('dd', $current_time)) {
+    // Check if today.
+    if (date('dd', $anchor_time) == date('dd', $current_time)) {
       $is_today = TRUE;
     }
     else {
       $is_today = FALSE;
     }
 
-    return array('is_valid' => $is_valid, 'days' => $days_remaining, 'is_today' => $is_today);
+    return [
+      'is_valid' => $is_valid,
+      'days' => $days_remaining,
+      'is_today' => $is_today,
+    ];
   }
 
 }
