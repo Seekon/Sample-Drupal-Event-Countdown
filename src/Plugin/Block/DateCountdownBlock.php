@@ -27,22 +27,24 @@ class DateCountdownBlock extends BlockBase {
       'max-age' => 0,
     ];
 
-    // Get node.
-    $node_parameter = \Drupal::routeMatch()->getParameter('node');
-
-    // If node isn't an event, exit.
-    if ($node_parameter->getType() != "event") {
-
+    // If node can not be retrieved, return from the function.
+    if (empty($node_parameter = \Drupal::routeMatch()->getParameter('node'))) {
       // Set #markup into $return_array.
-      $return_array['#markup'] = $this->t('Error in calculating time difference');
+      $return_array['#markup'] = $this->t('Cannot retrieve current page node');
+      return $return_array;
+    }
 
-      // Exit from the method.
+    // If node isn't an event, return from the function.
+    if ($node_parameter->getType() != "event4") {
+      // Set #markup into $return_array.
+      $return_array['#markup'] = $this->t('Current node is not an event');
       return $return_array;
     }
 
     // Get field_event_date value.
-    $date = $node_parameter->get("field_event_date")->getValue();
-    $date = $date[0]['value'];
+    if ($date = $node_parameter->get("field_event_date")->getValue()) {
+      $date = $date[0]['value'];
+    }
 
     // Returns false if calculating was not possible.
     $date_difference = \Drupal::service('date_countdown.day_difference')->countDayDifference($date);
