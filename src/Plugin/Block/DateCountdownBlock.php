@@ -35,7 +35,7 @@ class DateCountdownBlock extends BlockBase {
     }
 
     // If node isn't an event, return from the function.
-    if ($node_parameter->getType() != "event4") {
+    if ($node_parameter->getType() != "event") {
       // Set #markup into $return_array.
       $return_array['#markup'] = $this->t('Current node is not an event');
       return $return_array;
@@ -69,18 +69,29 @@ class DateCountdownBlock extends BlockBase {
     // @todo hide the block instead of showing error text?
     if (!$date_difference['is_valid']) {
       $return_array['#markup'] = $this->t('Error in calculating time difference');
+      return;
     }
-    elseif ($date_difference['is_today']) {
+
+    // Is it today?
+    if ($date_difference['is_today']) {
       $return_array['#markup'] = $this->t('This event is happening today');
+      return;
     }
-    elseif ($date_difference['days'] > 1) {
-      $return_array['#markup'] = $this->t('@daydiff days left until event starts', ['@daydiff' => $date_difference['days']]);
-    }
-    elseif ($date_difference['days'] == 1) {
-      $return_array['#markup'] = $this->t('1 day left until event starts');
-    }
-    else {
-      $return_array['#markup'] = $this->t('This event already passed.');
+
+    // Markup based on day difference.
+    switch ($date_difference['days']) {
+
+      case ($date_difference['days'] > 1):
+        $return_array['#markup'] = $this->t('@daydiff days left until event starts', ['@daydiff' => $date_difference['days']]);
+        break;
+
+      case 1:
+      case 0:
+        $return_array['#markup'] = $this->t('1 day left until event starts');
+        break;
+
+      default:
+        $return_array['#markup'] = $this->t('This event already passed.');
     }
   }
 
