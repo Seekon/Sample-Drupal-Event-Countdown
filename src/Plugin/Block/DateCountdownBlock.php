@@ -15,30 +15,32 @@ use Drupal\Core\Block\BlockBase;
 class DateCountdownBlock extends BlockBase {
 
   /**
+   * Return build array.
+   *
+   * @var array
+   */
+  private $build = [];
+
+  /**
    * {@inheritdoc}
    */
   public function build() {
 
-    // Build method return array.
-    $return_array = [];
-
-    // Cache prohibiter.
-    $return_array['#cache'] = [
-      'max-age' => 0,
-    ];
+    // Set build array cache flag.
+    $this->setBuildCache();
 
     // If node can not be retrieved, return from the function.
     if (empty($node_parameter = \Drupal::routeMatch()->getParameter('node'))) {
       // Set #markup into $return_array.
-      $return_array['#markup'] = $this->t('Cannot retrieve current page node');
-      return $return_array;
+      $this->build['#markup'] = $this->t('Cannot retrieve current page node');
+      return $this->build;
     }
 
     // If node isn't an event, return from the function.
     if ($node_parameter->getType() != "event") {
       // Set #markup into $return_array.
-      $return_array['#markup'] = $this->t('Current node is not an event');
-      return $return_array;
+      $this->build['#markup'] = $this->t('Current node is not an event');
+      return $this->build;
     }
 
     // Get field_event_date value.
@@ -50,9 +52,9 @@ class DateCountdownBlock extends BlockBase {
     $date_difference = \Drupal::service('date_countdown.day_difference')->countDayDifference($date);
 
     // Set #markup into $return_array.
-    $this->setArrayDateDifference($date_difference, $return_array);
+    $this->setArrayDateDifference($date_difference);
 
-    return $return_array;
+    return $this->build;
   }
 
   /**
@@ -60,43 +62,51 @@ class DateCountdownBlock extends BlockBase {
    *
    * @param int $date_difference
    *   Day difference between current and searchable date.
-   * @param array &$return_array
-   *   Array that receives result.
    */
-  private function setArrayDateDifference($date_difference, array &$return_array) {
+  private function setArrayDateDifference($date_difference) {
 
     // Checks if date calculation was successful.
     // @todo hide the block instead of showing error text?
     if (!$date_difference['is_valid']) {
-      $return_array['#markup'] = $this->t('Error in calculating time difference');
+      $this->build['#markup'] = $this->t('Error in calculating time difference');
       return;
     }
 
     // Is it today?
     if ($date_difference['is_today']) {
-      $return_array['#markup'] = $this->t('This event is happening today');
+      $this->build['#markup'] = $this->t('This event is happening today');
       return;
     }
 
     // Markup based on day difference.
     switch ($date_difference['days']) {
 
-      case ($date_difference['days'] > 1):
-        $return_array['#markup'] = $this->t('@daydiff days left until event starts', ['@daydiff' => $date_difference['days']]);
+      case 0:
+      case 1:
+        $this->build['#markup'] = $this->t('1 day left until event starts');
         break;
 
-      case 1:
-      case 0:
-        $return_array['#markup'] = $this->t('1 day left until event starts');
+      case ($date_difference['days'] > 1):
+        $this->build['#markup'] = $this->t('@daydiff days left until event starts', ['@daydiff' => $date_difference['days']]);
         break;
 
       default:
-        $return_array['#markup'] = $this->t('This event already passed.');
+        $this->build['#markup'] = $this->t('This event already passed.');
     }
   }
 
   /**
-   * Another cache prohibiter.
+   * Adds build array no cache flag.
+   */
+  public function setBuildCache() {
+    // Cache prohibiter.
+    $this->build['#cache'] = [
+      'max-age' => 0,
+    ];
+  }
+
+  /**
+   * Cache prohibiter.
    */
   public function getCacheMaxAge() {
     return 0;
